@@ -41,14 +41,14 @@ public class Crud {
 		Statement stm = connection.createStatement();
 
 		String NOME;
-		int CPF;
+		String CPF;
 		
 		try {
 
 			System.out.println("NOME: ");
 			NOME = in.next();
 			System.out.println("CPF: ");
-			CPF = in.nextInt();
+			CPF = in.next();
 
 			stm.execute("INSERT INTO PESSOAS (nome, cpf) values ('" + NOME + "','" + CPF + "')",
 					Statement.RETURN_GENERATED_KEYS);
