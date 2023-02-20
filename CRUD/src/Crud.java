@@ -31,33 +31,39 @@ public class Crud {
 			System.out.println("CPF: " + cpf + "\n");
 		}
 
+		rst.close();
+		stm.close();
 		connection.close();
 	}
 
 	public void Insercao() throws SQLException {
-
+		String NOME = null;
+		Double CPF;
 		ConnectionFactory connectionFactory = new ConnectionFactory();
 		Connection connection = connectionFactory.recuperarConexao();
-		Statement stm = connection.createStatement();
 
-		String NOME;
-		String CPF;
-		
 		try {
 
 			System.out.println("NOME: ");
 			NOME = in.next();
 			System.out.println("CPF: ");
-			CPF = in.next();
+			CPF = in.nextDouble();
 
-			stm.execute("INSERT INTO PESSOAS (nome, cpf) values ('" + NOME + "','" + CPF + "')",
+			PreparedStatement stm = connection.prepareStatement("INSERT INTO PESSOAS (nome, cpf) VALUES (?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
+			stm.setString(1, NOME);
+			stm.setDouble(2, CPF);
+			stm.execute();
+
 			ResultSet rst = stm.getGeneratedKeys();
+
 			while (rst.next()) {
 				Integer id = rst.getInt(1);
 				System.out.println("O id criado foi: " + id);
 			}
+			rst.close();
+			stm.close();
 
 		} catch (MysqlDataTruncation Ex) {
 			System.out.println("CPF com numeração maior do que o permitido, tente novamente.");
@@ -65,11 +71,10 @@ public class Crud {
 			System.out.println("CPF já existente, tente novamente.");
 		} catch (SQLException Ex) {
 			System.out.println("Preencha o CPF apenas com números.");
-		}
-
-		finally {
+		} finally {
 			connection.close();
 		}
+
 	}
 
 	public void Delete() throws SQLException {
@@ -87,6 +92,7 @@ public class Crud {
 
 		System.out.println("Quantidade de linhas que foram modificadas: " + linhasModificadas);
 
+		stm.close();
 		connection.close();
 
 	}
@@ -103,7 +109,7 @@ public class Crud {
 
 			int escolha = in.nextInt();
 			String NOME;
-			String CPF;
+			Double CPF;
 			try {
 
 				if (escolha == 1) {
@@ -117,18 +123,20 @@ public class Crud {
 					stm.execute();
 
 					System.out.println("Linha modificada do ID: " + ID);
+					stm.close();
 
 				} else if (escolha == 2) {
 
 					System.out.println("Caso tenha digitado errado o número do CPF, edite o CPF do registro agora: ");
-					CPF = in.next();
+					CPF = in.nextDouble();
 
 					PreparedStatement stm = connection.prepareStatement("UPDATE PESSOAS SET CPF = ? WHERE ID = ?");
-					stm.setString(1, CPF);
+					stm.setDouble(1, CPF);
 					stm.setInt(2, ID);
 					stm.execute();
 
 					System.out.println("Linha modificada do ID: " + ID);
+					stm.close();
 				}
 
 			} catch (MysqlDataTruncation Ex) {
@@ -141,17 +149,17 @@ public class Crud {
 					System.out.println("Digite o novo nome do registro a qual deseja editar: ");
 					NOME = in.next();
 					System.out.println("Caso tenha digitado errado o número do CPF, edite o CPF do registro agora: ");
-					CPF = in.next();
+					CPF = in.nextDouble();
 
 					PreparedStatement stm = connection
 							.prepareStatement("UPDATE PESSOAS SET NOME = ?, CPF = ? WHERE ID = ?");
 					stm.setString(1, NOME);
-					stm.setString(2, CPF);
+					stm.setDouble(2, CPF);
 					stm.setInt(3, ID);
 					stm.execute();
 
 					System.out.println("Linha modificada do ID: " + ID);
-
+					stm.close();
 				}
 			} catch (MysqlDataTruncation Ex) {
 				System.out.println("CPF com numeração maior do que o permitido, tente novamente.");
