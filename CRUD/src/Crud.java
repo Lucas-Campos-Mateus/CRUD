@@ -37,23 +37,23 @@ public class Crud {
 	}
 
 	public void Insercao() throws SQLException {
-		String NOME = null;
-		Double CPF;
 		ConnectionFactory connectionFactory = new ConnectionFactory();
 		Connection connection = connectionFactory.recuperarConexao();
 
+		System.out.println("NOME: ");
+		String NOME = in.next();
+
+		System.out.println("CPF: ");
+		Long CPFConverter = in.nextLong();
+
+		String CPF = Long.toString(CPFConverter);
+
 		try {
-
-			System.out.println("NOME: ");
-			NOME = in.next();
-			System.out.println("CPF: ");
-			CPF = in.nextDouble();
-
 			PreparedStatement stm = connection.prepareStatement("INSERT INTO PESSOAS (nome, cpf) VALUES (?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			stm.setString(1, NOME);
-			stm.setDouble(2, CPF);
+			stm.setString(2, CPF);
 			stm.execute();
 
 			ResultSet rst = stm.getGeneratedKeys();
@@ -74,7 +74,6 @@ public class Crud {
 		} finally {
 			connection.close();
 		}
-
 	}
 
 	public void Delete() throws SQLException {
@@ -108,8 +107,9 @@ public class Crud {
 					+ "\nPara editar ambos: 3");
 
 			int escolha = in.nextInt();
+
 			String NOME;
-			Double CPF;
+
 			try {
 
 				if (escolha == 1) {
@@ -126,12 +126,13 @@ public class Crud {
 					stm.close();
 
 				} else if (escolha == 2) {
-
 					System.out.println("Caso tenha digitado errado o número do CPF, edite o CPF do registro agora: ");
-					CPF = in.nextDouble();
+					Long CPFConverter = in.nextLong();
+
+					String CPF = Long.toString(CPFConverter);
 
 					PreparedStatement stm = connection.prepareStatement("UPDATE PESSOAS SET CPF = ? WHERE ID = ?");
-					stm.setDouble(1, CPF);
+					stm.setString(1, CPF);
 					stm.setInt(2, ID);
 					stm.execute();
 
@@ -149,12 +150,14 @@ public class Crud {
 					System.out.println("Digite o novo nome do registro a qual deseja editar: ");
 					NOME = in.next();
 					System.out.println("Caso tenha digitado errado o número do CPF, edite o CPF do registro agora: ");
-					CPF = in.nextDouble();
+					Long CPFConverter = in.nextLong();
+
+					String CPF = Long.toString(CPFConverter);
 
 					PreparedStatement stm = connection
 							.prepareStatement("UPDATE PESSOAS SET NOME = ?, CPF = ? WHERE ID = ?");
 					stm.setString(1, NOME);
-					stm.setDouble(2, CPF);
+					stm.setString(2, CPF);
 					stm.setInt(3, ID);
 					stm.execute();
 
